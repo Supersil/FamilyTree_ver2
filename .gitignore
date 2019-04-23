@@ -1,0 +1,14 @@
+FamilyTree_ver2.pro.user
+Build/Makefile.Release
+Build/Makefile.Debug
+Build/debug/main.obj
+Build/debug/familytreewidget.obj
+Build/debug/FamilyTree_ver2.vc.pdb
+Build/debug/FamilyTree_ver2.pdb
+Build/debug/moc_predefs.h
+Build/.qmake.stash
+Build/debug/FamilyTree_ver2.ilk
+Build/debug/FamilyTree_ver2.exe
+Build/debug/moc_familytreewidget.obj
+Build/debug/moc_familytreewidget.cpp
+Build/Makefile

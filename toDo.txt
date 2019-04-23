@@ -1,0 +1,26 @@
+1) Данные хранятся в базе данных:
+
+{RootTable}
+	RootId int autoincrement
+	Name text
+	TableName text
+	
+"TableName" = Name.(first substr before ' ') + "_Table" + [num]
+
+{"TableName"}
+	EntryID int autoincrement
+	Name text
+	DateOfBirth int
+	isAlive text
+	DateofDeath int
+	Info text
+	birthPlace text
+	photo LONG ТЕХТ 
+	sex	text
+	fatherID int
+	motherID int
+	childrenCnt int
+	childrenVect text /*id id id ... id*/
+
+	
+	
