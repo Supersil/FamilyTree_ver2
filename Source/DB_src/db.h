@@ -2,6 +2,8 @@
  * Интерфейс к базе данных SQLite3, функции передают SQL команды работы с таблицами, записями.
  */
 
+#ifndef TEST
+
 #pragma once
 
 #include <string>
@@ -135,6 +137,7 @@ private:
 private:
     std::string _dbPath;
     sqlite3 *_db;
-    sqlite3_stmt *_pStmt;
+//    sqlite3_stmt *_pStmt;
 };
 
+#endif

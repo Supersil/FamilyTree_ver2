@@ -29,13 +29,15 @@ SOURCES += \
         Source/familytreewidget.cpp \
     Source/DB_src/db.cpp \
     Source/DB_src/sqlite3/sqlite3.c \
-    Source/person.cpp
+    Source/person.cpp \
+    Source/writelog.cpp
 
 HEADERS += \
         Source/familytreewidget.h \
     Source/DB_src/db.h \
     Source/DB_src/sqlite3/sqlite3.h \
-    Source/person.h
+    Source/person.h \
+    Source/writelog.h
 
 INCLUDEPATH += Source
 INCLUDEPATH += Source/DB_src

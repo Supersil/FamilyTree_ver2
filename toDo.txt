@@ -10,9 +10,9 @@
 {"TableName"}
 	EntryID int autoincrement
 	Name text
-	DateOfBirth int
+	DateOfBirth text
 	isAlive text
-	DateofDeath int
+	DateofDeath text
 	Info text
 	birthPlace text
 	photo LONG ТЕХТ 
