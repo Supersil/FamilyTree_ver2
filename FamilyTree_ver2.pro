@@ -43,6 +43,9 @@ INCLUDEPATH += Source
 INCLUDEPATH += Source/DB_src
 INCLUDEPATH += Source/DB_src/sqlite3
 
+DEFINES += DATABASE
+DEFINES +="DEBUG_LOG=true"
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

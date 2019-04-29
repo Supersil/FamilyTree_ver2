@@ -20,20 +20,24 @@ void writeLog(QString fileName, QString str)
 
 void writeDebugLog(QString str)
 {
+#if(DEBUG_LOG)
    QString dbgPath = QString() + LOG_ROOT + "dbg_" +  QDateTime::currentDateTime().toString("yyyyMMdd") + ".log";
    writeLog(dbgPath,str);
+#else
+   (void)str;
+#endif
 }
 
 
 void writeWorkLog(QString str)
 {
-   QString dbgPath = QString() + LOG_ROOT + "work_" +  QDateTime::currentDateTime().toString("yyyyMMdd") + ".log";
-   writeLog(dbgPath,str);
+   QString wrkPath = QString() + LOG_ROOT + "work_" +  QDateTime::currentDateTime().toString("yyyyMMdd") + ".log";
+   writeLog(wrkPath,str);
 }
 
 
 void writeErrorLog(QString str)
 {
-   QString dbgPath = QString() + LOG_ROOT + "error_" +  QDateTime::currentDateTime().toString("yyyyMMdd") + ".log";
-   writeLog(dbgPath,str);
+   QString errPath = QString() + LOG_ROOT + "error_" +  QDateTime::currentDateTime().toString("yyyyMMdd") + ".log";
+   writeLog(errPath,str);
 }

@@ -2,7 +2,7 @@
  * Интерфейс к базе данных SQLite3, функции передают SQL команды работы с таблицами, записями.
  */
 
-#ifndef TEST
+#ifdef DATABASE
 
 #pragma once
 
@@ -22,12 +22,12 @@
         `TABLENAME`     TEXT NOT NULL                                   \
         );"
 
-#define INSERT_LOG_TABLE_FORMAT     "CREATE TABLE IF NOT EXISTS `%s` (  \
+#define INSERT_ROOT_TABLE_FORMAT     "CREATE TABLE IF NOT EXISTS `%s` (  \
         `ENTRYID`         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,     \
         `NAME`            TEXT NOT NULL,                                  \
-        `DATEOFBIRTH`     INTEGER NOT NULL,                               \
+        `DATEOFBIRTH`     TEXT NOT NULL,                               \
         `ISALIVE`         TEXT NOT NULL,                                  \
-        `DATEOFDEATH`     INTEGER NOT NULL,                               \
+        `DATEOFDEATH`     TEXT NOT NULL,                               \
         `INFO`            TEXT NOT NULL,                                  \
         `BIRTHPLACE`      TEXT NOT NULL,                                  \
         `PHOTO`           LONG TEXT NOT NULL,                             \
@@ -35,7 +35,7 @@
         `FATHERID`        INTEGER NOT NULL,                               \
         `MOTHERID`        INTEGER NOT NULL,                               \
         `CHILDRENCNT`     INTEGER NOT NULL,                               \
-        `CHILDRENID`      TEXT NOT NULL,                               \
+        `CHILDRENID`      TEXT NOT NULL                               \
         );"
 
 //SELECT * FROM LOGLIST WHERE Tablename LIKE 'adminlog%'
@@ -62,6 +62,7 @@
 
 #pragma pack(pop)
 
+
 class DB
 {
 public:
@@ -81,48 +82,11 @@ public:
     int beginTransaction(sqlite3 *db);
     int endTransaction(sqlite3 *db);
 
-    int createRoot(std::string rootName, std::string& tableName);
-    int selectRoot(std::string rootName, std::string& tableName);
-    int addPerson(std::string tableName, Person * person, int * id);
+    int createRoot(std::string rootName, std::string tableName);
+    int addPerson(std::string tableName, Person * person);
     int getListOfRoots(std::vector<std::string> &rootList, std::vector<std::string> &tableList, std::string format = "'%'");
 
-    int createLogTable(std::string logtable, std::string utc, std::string keydataid);
-    int getLogIDListByLogTable(std::string logtable, std::vector<std::string> &itemList);
-    int getLogTableList(std::vector<std::string> &itemList, std::vector<std::string> &utcList, std::string format = "'%'");
-    int getKeyDataIDbyLogName(std::string logName, std::string &keyDataID);
-    int insertLogItem(std::string logtable, std::string iv,
-                        std::string utc, std::string data, std::string mac);
-    int insertLogItem(std::string  logtable, std::string logid, std::string iv,
-                            std::string utc, std::string data, std::string mac);
-    int getLogDataByID(std::string logtable, std::string logid, std::string &iv,
-                        std::string &utc, std::string &data, std::string &mac);
-    int deleteLogTable(std::string logtable);
-    int deleteLogItemByID(std::string logtable, std::string logid);
-
-    
-    int getINIIDList(std::vector<std::string> &itemList);
-    int insertINIItem(std::string iniid, std::string iv, std::string data, std::string mac, std::string utc, std::string keydataid);
-    int getINIDataByID(std::string iniid, std::string &iv, std::string &data, std::string &mac, std::string &utc, std::string &keydataid);
-    int deleteINIItemByID(std::string iniid);
-
-    
-    int getFileIDList(std::vector<std::string> &itemList);
-    int insertFileItem(std::string fileid, std::string iv, std::string data, std::string mac, std::string utc, std::string keydataid);
-    int getFileDataByID(std::string fileid, std::string &iv, std::string &data, std::string &mac, std::string &utc, std::string &keydataid);
-    int deleteFileItemByID(std::string fileid);
-
-    
-    int getDefaultMKID(std::string &mkid, std::string &utc_expireTime);
-    int insertDefaultMKID(std::string mkid, std::string utc_expireTime);
-    int deleteDefaultMKID();
-    
-    
-    int getLastPINChangeItem(std::string SerialNum, std::string &utc);
-    int insertLastPINChangeItem(std::string SerialNum, std::string utc);
-    int deleteLastPINChangeItem(std::string SerialNum);
-    
-private:
-    int finalizeSTMT()
+    int finalizeSTMT(sqlite3_stmt *_pStmt)
     {
         int ret = 0;
 
@@ -134,10 +98,32 @@ private:
         return ret;
     }
 
+    sqlite3 *_db;
 private:
     std::string _dbPath;
-    sqlite3 *_db;
+    bool _bOpened;
 //    sqlite3_stmt *_pStmt;
+};
+
+
+class dbTransactor
+{
+   DB * _db;
+   sqlite3_stmt *_pStmt;
+public:
+   dbTransactor(DB * db, sqlite3_stmt * pStmt) : _db(db), _pStmt(pStmt)
+   {
+      if (_db)
+         _db->beginTransaction(_db->_db);
+   }
+   ~dbTransactor()
+   {
+      if ((_db) && (_pStmt))
+      {
+         _db->finalizeSTMT(_pStmt);
+         _db->endTransaction(_db->_db);
+      }
+   }
 };
 
 #endif

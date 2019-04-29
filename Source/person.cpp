@@ -29,7 +29,7 @@ Person::Person(const Person &src)
     id = new_id();
     info = src.info;
     birthPlace = src.birthPlace;
-    photoPath = src.photoPath;
+    photoData = src.photoData;
     set = true;
     sex = src.sex;
 }
@@ -51,13 +51,13 @@ Person::Person(QDate birth, QDate death, bool alive, QString n_name, QString n_i
     id = new_id();
     info = n_info;
     birthPlace = n_birthPlace;
-    photoPath = photopath;
+//    photoData = photo;
     set = true;
     sex = s;
 }
 
 Person::Person(QDate birth, QString n_name, QString n_info, QString n_birthPlace, QString photopath, sexx s)
-    : info(n_info), birthPlace(n_birthPlace),photoPath(photopath)
+    : info(n_info), birthPlace(n_birthPlace)//,photoPath(photopath)
 {
     birthDate = birth;
     deathDate.setDate(0,0,0);
@@ -145,15 +145,15 @@ int Person::children_num()
 
 Person * Person::child(int num)
 {
-    return children[num];
+   return children[num];
 }
 
-QString Person::getPhotoPath()
+QByteArray Person::getPhotoData()
 {
-    return photoPath;
+   return photoData;
 }
 
-bool Person::checkAlive()
+bool Person::isAlive()
 {
     return bIsAlive;
 }
@@ -163,11 +163,11 @@ void Person::import_data(Person * profile)
 
     birthDate = profile->getBDate();
     deathDate = profile->getDDate();
-    bIsAlive = profile->checkAlive();
+    bIsAlive = profile->isAlive();
     name = profile->getName();
     info = profile->getInfo();
     birthPlace = profile->getBirthPlace();
-    photoPath = profile->getPhotoPath();
+    photoData = profile->getPhotoData();
     father = profile->dad();
     mother = profile->mom();
     sex = profile->getSex();
@@ -226,13 +226,13 @@ void Person::save_pure(QString filename)
     out << info << endl;
     out << "\\!info!/" << endl ;
 
-    out << photoPath << endl<< endl;
+//    out << photoPath << endl<< endl;
 
 //   if (photoPath.contains("no_photo") || photoPath.size()==0)
 //      out << "NULL" << endl << endl;
 //   else
 //   {
-        QImage img(photoPath);
+//        QImage img(photoPath);
 
 //      out << img.width() << ' ' << img.height() << ' ' << (int)img.format() << ' ';
 //      int len = img.byteCount();
