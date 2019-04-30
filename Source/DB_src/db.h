@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "sqlite3.h"
+#include "person.h"
 
 #define CREATE_TABLES           "BEGIN TRANSACTION;                     \
         CREATE TABLE IF NOT EXISTS `ROOTTABLE` (                     \
@@ -84,6 +85,7 @@ public:
     int createRoot(std::string rootName, std::string tableName);
     int addPerson(std::string tableName, uint32_t id, std::string name, std::string birthDate, std::string isAlive, std::string deathDate, std::string info, std::string birthPlace, std::string photo, std::string sex, uint32_t fatherId, uint32_t motherId, uint32_t childrenCnt, std::string childrenID);
     int getListOfRoots(std::vector<std::string> &rootList, std::vector<std::string> &tableList, std::string format = "'%'");
+    int getListOfPersons(std::string tableName, std::vector<Person> &persList, std::string format = "'%'");
 
     int finalizeSTMT(sqlite3_stmt *_pStmt)
     {

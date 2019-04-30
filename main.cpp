@@ -71,6 +71,14 @@ int main(int argc, char *argv[])
       return -1;
    }
 
+   std::vector<std::string> roots, tables;
+
+   if(db.getListOfRoots(roots,tables))
+   {
+      qDebug() << "Failed to get list of roots";
+      return -1;
+   }
+
    if (db.closeDB())
    {
       qDebug() << "Failed to close db";

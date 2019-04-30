@@ -301,6 +301,10 @@ int DB::getListOfRoots(std::vector<std::string> & rootList, std::vector<std::str
 {
    int ret = 0;
    int row = 0;
+
+   rootList.clear();
+   tableList.clear();
+
    std::string request = "SELECT * FROM ";
    request += "ROOTTABLE";
    request += " WHERE NAME LIKE ";
@@ -308,13 +312,14 @@ int DB::getListOfRoots(std::vector<std::string> & rootList, std::vector<std::str
 
    tableList.clear();
    rootList.clear();
+
    sqlite3_stmt *_pStmt;
 
    ret = sqlite3_prepare(_db, request.c_str(), -1, &_pStmt, nullptr);
 
    if(ret != SQLITE_OK)
    {
-//        writeDebugLog("CT2DB::getLogTableList Prepare failed");
+        writeDebugLog("CT2DB::getLogTableList Prepare failed");
         databaseError();
         return -1;
    }
@@ -330,7 +335,7 @@ int DB::getListOfRoots(std::vector<std::string> & rootList, std::vector<std::str
         {
              const unsigned char *value;
              value  = sqlite3_column_text(_pStmt, 1);
-//             writeDebugLog("Item %d: %s", row, value);
+             writeDebugLog("Item " + QString::number(row) );
              rootList.push_back((char*)value);
              value  = sqlite3_column_text(_pStmt, 2);
              tableList.push_back((char*)value);
@@ -338,7 +343,7 @@ int DB::getListOfRoots(std::vector<std::string> & rootList, std::vector<std::str
         }
         else if (s == SQLITE_DONE)
         {
-//             writeDebugLog("DONE");
+             writeDebugLog("DONE");
              break;
         }
         else
