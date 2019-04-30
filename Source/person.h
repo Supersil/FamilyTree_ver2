@@ -1,6 +1,37 @@
 #ifndef PERSON_H
 #define PERSON_H
 
+#include <QString>
+#include <QDate>
+#include <QVector>
+
+struct Person
+{
+   uint32_t id;
+   QString name;
+   QDate birthDate;
+   bool bIsAlive;
+   QDate deathDate;
+   QString info;
+   QString birthPlace;
+   QByteArray photoData;
+   QString sex;
+
+   Person * father;
+   Person * mother;
+   QVector<Person*> children;
+
+   static uint32_t global_id;
+   Person()
+   {
+      id = ++global_id;
+      father = nullptr;
+      mother = nullptr;
+   }
+};
+
+
+#ifdef PERSON_CLASS
 #include <QObject>
 #include <QDate>
 #include <QString>
@@ -61,5 +92,7 @@ public:
 public slots:
    void import_data(Person * profile);
 };
+
+#endif
 
 #endif // PERSON_H

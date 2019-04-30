@@ -163,10 +163,10 @@ int DB::createRoot(std::string rootName, std::string tableName)
 {
    writeDebugLog(QString("Create logTable: ") + tableName.c_str());
    int ret;
-   char request[1024] = { 0 };
+   char request[1224] = { 0 };
    sqlite3_stmt *_pStmt;
 
-   snprintf(request, 1024, "INSERT INTO ROOTTABLE (NAME,TABLENAME) VALUES(?, ?)");
+   snprintf(request, 1224, "INSERT INTO ROOTTABLE (NAME,TABLENAME) VALUES(?, ?)");
 
    ret = sqlite3_prepare(_db, request, -1, &_pStmt, nullptr);
 
@@ -197,9 +197,9 @@ int DB::createRoot(std::string rootName, std::string tableName)
          ret = 0;
 }
    _pStmt = 0;
-   memset(request, 0, 1024);
+   memset(request, 0, 1224);
 
-   snprintf(request, 1024, INSERT_ROOT_TABLE_FORMAT, tableName.c_str());
+   snprintf(request, 1224, INSERT_ROOT_TABLE_FORMAT, tableName.c_str());
 
    ret = sqlite3_prepare(_db, request, -1, &_pStmt, nullptr);
 
@@ -227,11 +227,15 @@ int DB::createRoot(std::string rootName, std::string tableName)
    return ret;
 }
 
-int DB::addPerson(std::string tableName, Person *person)
+int DB::addPerson(std::string tableName, uint32_t id, std::string name, std::string birthDate,
+                  std::string isAlive, std::string deathDate, std::string info,
+                  std::string birthPlace, std::string photo, std::string sex,
+                  uint32_t fatherId, uint32_t motherId, uint32_t childrenCnt,
+                  std::string childrenID)
 {
    writeDebugLog(QString("Insert logItem in ") + tableName.c_str());
 
-   if (tableName.empty() || (!person))
+   if (tableName.empty() || (name.empty()))
    {
       //printlog(DBG_ERROR, "CT2DB::insertLogItem Invalid data");
       return -1;
@@ -242,7 +246,7 @@ int DB::addPerson(std::string tableName, Person *person)
 
    std::string request = "INSERT INTO ";
    request += tableName;
-   request += " (ENTRYID, NAME, DATEOFBIRTH, ISALIVE, DATEOFDEATH, INFO, BIRTHPLACE, PHOTO, SEX, FATHERID,\
+   request += " (ID, NAME, DATEOFBIRTH, ISALIVE, DATEOFDEATH, INFO, BIRTHPLACE, PHOTO, SEX, FATHERID,\
  MOTHERID, CHILDRENCNT, CHILDRENID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
    ret = sqlite3_prepare(_db, request.c_str(), -1, &_pStmt, nullptr);
@@ -253,39 +257,26 @@ int DB::addPerson(std::string tableName, Person *person)
       return ret;
    }
 
-   const char * tmpStr = person->getName().toStdString().c_str();
-   ret |= sqlite3_bind_int(_pStmt, 1, person->get_id());
-//   ret |= sqlite3_bind_text(_pStmt, 2, tmpStr.data(),  -1, SQLITE_STATIC);
-   tmpStr = person->getBDate().toString("dd.MM.yyyy").toLocal8Bit();
-//   ret |= sqlite3_bind_text(_pStmt, 3, tmpStr.data(),  -1, SQLITE_STATIC);
-   ret |= sqlite3_bind_text(_pStmt, 4, person->isAlive()?"Alive":"Dead",  -1, SQLITE_STATIC);
-   ret |= sqlite3_bind_text(_pStmt, 5, person->getDDate().toString("dd.MM.yyyy").toLocal8Bit().data(),  -1, SQLITE_STATIC);
-   ret |= sqlite3_bind_text(_pStmt, 6, person->getInfo().toLocal8Bit().data(),  -1, SQLITE_STATIC);
-   ret |= sqlite3_bind_text(_pStmt, 7, person->getBirthPlace().toLocal8Bit().data(),  -1, SQLITE_STATIC);
-   ret |= sqlite3_bind_text(_pStmt, 8, person->getPhotoData().data(),  -1, SQLITE_STATIC);
-   ret |= sqlite3_bind_text(_pStmt, 9, (person->getSex() == sexx::MALE)?"MALE":"FEMALE",  -1, SQLITE_STATIC);
+   ret |= sqlite3_bind_int(_pStmt, 1, id);
+   ret |= sqlite3_bind_text(_pStmt, 2, name.c_str(),  -1, SQLITE_STATIC);
+   ret |= sqlite3_bind_text(_pStmt, 3, birthDate.c_str(),  -1, SQLITE_STATIC);
+   ret |= sqlite3_bind_text(_pStmt, 4, isAlive.c_str(),  -1, SQLITE_STATIC);
+   ret |= sqlite3_bind_text(_pStmt, 5, deathDate.c_str(),  -1, SQLITE_STATIC);
+   ret |= sqlite3_bind_text(_pStmt, 6, info.c_str(),  -1, SQLITE_STATIC);
+   ret |= sqlite3_bind_text(_pStmt, 7, birthPlace.c_str(),  -1, SQLITE_STATIC);
+   ret |= sqlite3_bind_text(_pStmt, 8, photo.c_str(),  -1, SQLITE_STATIC);
+   ret |= sqlite3_bind_text(_pStmt, 9, sex.c_str(),  -1, SQLITE_STATIC);
+   ret |= sqlite3_bind_int(_pStmt, 10, fatherId);
+   ret |= sqlite3_bind_int(_pStmt, 11, motherId);
+   ret |= sqlite3_bind_int(_pStmt, 12, childrenCnt);
+   ret |= sqlite3_bind_text(_pStmt, 13, childrenID.c_str(),  -1, SQLITE_STATIC);
 
-   if (person->dad()) ret |= sqlite3_bind_int(_pStmt, 10, person->dad()->get_id());
-   else ret |= sqlite3_bind_int(_pStmt, 10, -1);
-
-   if (person->mom()) ret |= sqlite3_bind_int(_pStmt, 11, person->mom()->get_id());
-   else ret |= sqlite3_bind_int(_pStmt, 11, -1);
-
-   ret |= sqlite3_bind_int(_pStmt, 12, person->children_num());
 
    if( ret != SQLITE_OK )
    {
         databaseError();
         return ret;
    }
-
-   QString children;
-   for(int i = 0; i < person->children_num(); i++)
-   {
-      if (person->child(i))
-      children.append(QString::number(person->child(i)->get_id()) + " ");
-   }
-   ret |= sqlite3_bind_text(_pStmt, 13, children.toLocal8Bit().data(),  -1, SQLITE_STATIC);
 
    dbTransactor trans(this,_pStmt);
 

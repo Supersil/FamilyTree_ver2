@@ -13,7 +13,6 @@
 #include <vector>
 
 #include "sqlite3.h"
-#include "person.h"
 
 #define CREATE_TABLES           "BEGIN TRANSACTION;                     \
         CREATE TABLE IF NOT EXISTS `ROOTTABLE` (                     \
@@ -24,6 +23,7 @@
 
 #define INSERT_ROOT_TABLE_FORMAT     "CREATE TABLE IF NOT EXISTS `%s` (  \
         `ENTRYID`         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,     \
+        `ID`              INTEGER NOT NULL ,     \
         `NAME`            TEXT NOT NULL,                                  \
         `DATEOFBIRTH`     TEXT NOT NULL,                               \
         `ISALIVE`         TEXT NOT NULL,                                  \
@@ -76,14 +76,13 @@ public:
 
     static int dbCallback(void *count, int argc, char **argv, char **azColName);
     int createTables();
-    int showTable(const char *tableName);
     void databaseError();
 
     int beginTransaction(sqlite3 *db);
     int endTransaction(sqlite3 *db);
 
     int createRoot(std::string rootName, std::string tableName);
-    int addPerson(std::string tableName, Person * person);
+    int addPerson(std::string tableName, uint32_t id, std::string name, std::string birthDate, std::string isAlive, std::string deathDate, std::string info, std::string birthPlace, std::string photo, std::string sex, uint32_t fatherId, uint32_t motherId, uint32_t childrenCnt, std::string childrenID);
     int getListOfRoots(std::vector<std::string> &rootList, std::vector<std::string> &tableList, std::string format = "'%'");
 
     int finalizeSTMT(sqlite3_stmt *_pStmt)

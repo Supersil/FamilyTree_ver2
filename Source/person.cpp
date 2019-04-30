@@ -1,5 +1,9 @@
 #include "person.h"
 
+uint32_t Person::global_id = 0;
+
+#ifdef PERSON_CLASS
+
 int Person::global_id;
 
 Person::Person()
@@ -249,4 +253,4 @@ void Person::save_pure(QString filename)
 
 }
 
-
+#endif
